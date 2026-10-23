@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Accès sécurisé AGRO-CIRCULAR OS — Authentification multi-facteurs (MFA) RBAC">
+  <title>AGRO-CIRCULAR OS | Connexion Sécurisée</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+  <div class="auth-bg">
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+    <div class="particle p5"></div>
+    <div class="grid-overlay"></div>
+  </div>
+  <div class="auth-wrapper">
+    <div class="brand-panel">
+      <div class="brand-panel-content">
+        <div class="brand-logo-lg">
+          <div class="brand-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">AGRO-CIRCULAR <span class="badge-os">OS</span></h1>
+            <p class="brand-version">v2.4 — Plateforme Agro-Industrielle Intégrée</p>
+          </div>
+        </div>
+        <div class="brand-entities">
+          <div class="entity-pill pill-green">
+            <span class="dot dot-green"></span>
+            <span>Ferme de Sara — Guilmey</span>
+          </div>
+          <div class="entity-pill pill-blue">
+            <span class="dot dot-blue"></span>
+            <span>SORATRAD Recyclage — Farcha</span>
+          </div>
+        </div>
+        <p class="brand-tagline">Gestion unifiée de la filière laitière, du verre, des plastiques et des drêches de brasserie. Économie circulaire, traçabilité et pilotage en temps réel.</p>
+        <div class="brand-features">
+          <div class="feat-item"><span class="feat-icon">🏭</span><span>Contrôle de gestion P&L temps réel</span></div>
+          <div class="feat-item"><span class="feat-icon">🔄</span><span>Boucles circulaires verre/plastique/drêches</span></div>
+          <div class="feat-item"><span class="feat-icon">🐄</span><span>Zootechnie & production laitière QHSE</span></div>
+          <div class="feat-item"><span class="feat-icon">🤖</span><span>Directeur IA & analyses stratégiques</span></div>
+        </div>
+        <div class="brand-compliance">
+          <span class="compliance-badge">RGPD</span>
+          <span class="compliance-badge">ISO 27001</span>
+          <span class="compliance-badge">ICPE</span>
+          <span class="compliance-badge">HACCP</span>
+        </div>
+      </div>
+    </div>
+    <div class="auth-panel">
+      <!-- LOGIN -->
+      <div class="auth-screen active" id="screen-login">
+        <div class="auth-card">
+          <div class="auth-card-header">
+            <div class="auth-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <h2>Connexion Sécurisée</h2>
+            <p>Accédez à votre espace de pilotage AGRO-CIRCULAR</p>
+          </div>
+          <div class="auth-alert" id="login-alert" style="display:none;"></div>
+          <form class="auth-form" id="form-login" autocomplete="off" novalidate>
+            <div class="form-group-auth">
+              <label for="login-username">Identifiant ou e-mail</label>
+              <div class="input-icon-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input type="text" id="login-username" class="auth-input" placeholder="admin / operateur / superviseur" required autocomplete="username">
+              </div>
+            </div>
+            <div class="form-group-auth">
+              <label for="login-password">Mot de passe</label>
+              <div class="input-icon-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password" id="login-password" class="auth-input" placeholder="••••••••" required autocomplete="current-password">
+                <button type="button" class="btn-toggle-pwd" id="btn-toggle-login-pwd" title="Voir/Masquer">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <input type="text" id="hp-field" name="hp" tabindex="-1" autocomplete="off" style="display:none;">
+            <div class="form-row-auth">
+              <label class="auth-checkbox-label">
+                <input type="checkbox" id="login-remember">
+                <span class="checkmark-auth"></span>
+                <span>Rester connecté (8h)</span>
+              </label>
+              <button type="button" class="link-btn" id="btn-goto-forgot">Mot de passe oublié ?</button>
+            </div>
+            <div id="lockout-bar" class="lockout-bar" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span id="lockout-msg">Compte temporairement verrouillé.</span>
+            </div>
+            <button type="submit" class="btn-auth-primary" id="btn-login">
+              <span id="btn-login-text">Se Connecter</span>
+              <div class="btn-spinner" id="login-spinner" style="display:none;"></div>
+            </button>
+          </form>
+          <div class="auth-divider"><span>Comptes de démonstration</span></div>
+          <div class="demo-accounts">
+            <button class="demo-btn" onclick="authApp.fillDemo('root')">
+              <span class="role-badge badge-root">ROOT</span>
+              <span class="demo-user">root / Root@2024!</span>
+            </button>
+            <button class="demo-btn" onclick="authApp.fillDemo('admin')">
+              <span class="role-badge badge-admin">ADMIN</span>
+              <span class="demo-user">admin / Admin@2024!</span>
+            </button>
+            <button class="demo-btn" onclick="authApp.fillDemo('superviseur')">
+              <span class="role-badge badge-supervisor">SUPERVISEUR</span>
+              <span class="demo-user">superviseur / Super@2024!</span>
+            </button>
+            <button class="demo-btn" onclick="authApp.fillDemo('operateur')">
+              <span class="role-badge badge-operator">OPÉRATEUR</span>
+              <span class="demo-user">operateur / Oper@2024!</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MFA -->
+      <div class="auth-screen" id="screen-mfa">
+        <div class="auth-card">
+          <div class="auth-card-header">
+            <div class="auth-icon-wrap icon-gold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h2>Vérification MFA</h2>
+            <p>Code à 6 chiffres envoyé à votre adresse enregistrée</p>
+          </div>
+          <div class="auth-alert" id="mfa-alert" style="display:none;"></div>
+          <form class="auth-form" id="form-mfa" novalidate>
+            <div class="mfa-target-info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>Code envoyé à : <strong id="mfa-email-hint">—</strong></span>
+            </div>
+            <div class="mfa-demo-box" id="mfa-demo-box">
+              <div class="mfa-demo-info">
+                <span class="mfa-demo-label">🔐 Environnement de Test Local</span>
+                <span class="mfa-demo-sub">Code OTP : <strong id="mfa-demo-code">...</strong></span>
+              </div>
+              <button type="button" class="btn-mfa-autofill" id="btn-autofill-otp" title="Cliquer pour remplir et valider">Remplir auto</button>
+            </div>
+            <div class="otp-grid">
+              <input type="text" maxlength="1" class="otp-input" id="otp-0" inputmode="numeric" pattern="[0-9]">
+              <input type="text" maxlength="1" class="otp-input" id="otp-1" inputmode="numeric" pattern="[0-9]">
+              <input type="text" maxlength="1" class="otp-input" id="otp-2" inputmode="numeric" pattern="[0-9]">
+              <input type="text" maxlength="1" class="otp-input" id="otp-3" inputmode="numeric" pattern="[0-9]">
+              <input type="text" maxlength="1" class="otp-input" id="otp-4" inputmode="numeric" pattern="[0-9]">
+              <input type="text" maxlength="1" class="otp-input" id="otp-5" inputmode="numeric" pattern="[0-9]">
+            </div>
+            <div class="mfa-timer"><span>Code expire dans : </span><strong id="mfa-countdown">5:00</strong></div>
+            <button type="submit" class="btn-auth-primary" id="btn-mfa-verify">
+              <span>Vérifier le Code MFA</span>
+              <div class="btn-spinner" id="mfa-spinner" style="display:none;"></div>
+            </button>
+            <button type="button" class="link-btn mt-1" id="btn-resend-code">Renvoyer un code</button>
+            <button type="button" class="link-btn mt-0" id="btn-back-to-login">← Retour connexion</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- FORGOT PASSWORD -->
+      <div class="auth-screen" id="screen-forgot">
+        <div class="auth-card">
+          <div class="auth-card-header">
+            <div class="auth-icon-wrap icon-amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <h2>Réinitialisation</h2>
+            <p>Saisissez votre identifiant ou e-mail de compte</p>
+          </div>
+          <div class="auth-alert" id="forgot-alert" style="display:none;"></div>
+          <form class="auth-form" id="form-forgot" novalidate>
+            <div class="form-group-auth">
+              <label for="forgot-email">Identifiant ou e-mail</label>
+              <div class="input-icon-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <input type="text" id="forgot-email" class="auth-input" placeholder="votre@email.com ou nom_utilisateur" required>
+              </div>
+            </div>
+            <button type="submit" class="btn-auth-primary">Envoyer le Lien de Réinitialisation</button>
+            <button type="button" class="link-btn mt-1" id="btn-back-from-forgot">← Retour connexion</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- RESET PASSWORD -->
+      <div class="auth-screen" id="screen-reset">
+        <div class="auth-card">
+          <div class="auth-card-header">
+            <div class="auth-icon-wrap icon-green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <h2>Nouveau Mot de Passe</h2>
+            <p>Choisissez un mot de passe fort (minimum 10 caractères)</p>
+          </div>
+          <div class="auth-alert" id="reset-alert" style="display:none;"></div>
+          <form class="auth-form" id="form-reset" novalidate>
+            <div class="form-group-auth">
+              <label for="reset-password">Nouveau mot de passe</label>
+              <div class="input-icon-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password" id="reset-password" class="auth-input" placeholder="Nouveau mot de passe" required>
+                <button type="button" class="btn-toggle-pwd" id="btn-toggle-reset-pwd">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              <div class="pwd-strength-wrap">
+                <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="pwd-strength-fill"></div></div>
+                <span class="pwd-strength-label" id="pwd-strength-label">Saisissez un mot de passe</span>
+              </div>
+              <ul class="pwd-rules">
+                <li id="rule-len" class="rule-item">✗ Au moins 10 caractères</li>
+                <li id="rule-upper" class="rule-item">✗ Une majuscule</li>
+                <li id="rule-lower" class="rule-item">✗ Une minuscule</li>
+                <li id="rule-digit" class="rule-item">✗ Un chiffre</li>
+                <li id="rule-special" class="rule-item">✗ Un caractère spécial (!@#$%...)</li>
+              </ul>
+            </div>
+            <div class="form-group-auth">
+              <label for="reset-confirm">Confirmer le mot de passe</label>
+              <div class="input-icon-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password" id="reset-confirm" class="auth-input" placeholder="Confirmez le mot de passe" required>
+              </div>
+            </div>
+            <button type="submit" class="btn-auth-primary" id="btn-reset-submit">Mettre à jour le mot de passe</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="auth-footer">
+        <span>© 2024 AGRO-CIRCULAR OS — Confidentiel & Propriétaire</span>
+        <span>RGPD • ISO 27001 • ICPE • HACCP</span>
+      </div>
+    </div>
+  </div>
+  <script src="auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,2257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Plateforme intégrée de gestion agro-industrielle et d'économie circulaire : Ferme de Sara (Guilmey) et SORATRAD (Farcha).">
+  <title>AGRO-CIRCULAR OS | Ferme de Sara & SORATRAD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">AGRO-CIRCULAR <span class="badge-os">OS v2.4</span></span>
+          <span class="logo-subtitle">Ferme de Sara (Guilmey) &times; SORATRAD (Farcha)</span>
+        </div>
+      </div>
+
+      <!-- Entity Switcher -->
+      <div class="entity-switcher" role="group" aria-label="Sélecteur d'entité">
+        <button type="button" class="entity-btn active" data-entity="consolidated" id="btn-entity-consolidated">
+          <span class="dot dot-gold"></span>
+          <span>Vue Consolidée</span>
+        </button>
+        <button type="button" class="entity-btn" data-entity="ferme" id="btn-entity-ferme">
+          <span class="dot dot-green"></span>
+          <span>Ferme de Sara</span>
+        </button>
+        <button type="button" class="entity-btn" data-entity="soratrad" id="btn-entity-soratrad">
+          <span class="dot dot-blue"></span>
+          <span>SORATRAD Déchets</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Widget environnement compact -->
+      <div class="weather-widget" title="Guilmey / Farcha — Devises: FCFA (XAF)">
+        <span class="loc-tag">N'Djaména</span>
+        <span style="color:rgba(255,255,255,0.15)">|</span>
+        <span class="temp-val">34°C</span>
+        <span class="humidity-val">38%💧</span>
+        <span style="color:rgba(255,255,255,0.15)">|</span>
+        <span style="font-size:0.72rem;color:var(--color-gold);font-weight:600;">FCFA</span>
+      </div>
+
+      <div class="zero-counter-badge" id="status-zero-badge" style="font-size:0.75rem;">
+        <span class="dot dot-gold"></span>
+        <span id="status-zero-badge-text">0 saisies</span>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <button class="btn-icon" id="btn-export-data" title="Exporter les données JSON">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+      </button>
+      <button class="btn-icon" id="btn-import-data" title="Importer une sauvegarde JSON">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+        </svg>
+      </button>
+      <input type="file" id="file-import-input" accept=".json" style="display:none;">
+
+      <button class="btn btn-primary" id="btn-quick-entry">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Saisie</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Alert Bar compact -->
+  <div class="alert-bar" id="operational-alert">
+    <div class="alert-content">
+      <span class="alert-badge" id="alert-banner-badge">SYSÈME OK</span>
+      <span class="alert-text" id="alert-banner-text">Plateforme opérationnelle. Prête pour la saisie ou le test de scénarios.</span>
+    </div>
+    <div class="alert-actions">
+      <button class="btn-link" id="btn-view-shuttle">Navette &rarr;</button>
+    </div>
+  </div>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar">
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">PILOTAGE GÉNÉRAL</div>
+        <button class="nav-item active" data-tab="tab-dashboard" id="nav-dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>Tableau de Bord</span>
+        </button>
+        <button class="nav-item" data-tab="tab-synergies" id="nav-synergies">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          <span>Boucle Circulaire & Flux</span>
+          <span class="pill-badge">Synergie</span>
+        </button>
+        <button class="nav-item" data-tab="tab-ai-expert" id="nav-ai-expert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          <span>Directeur IA & Stratégie</span>
+          <span class="pill-badge" style="background: rgba(139, 92, 246, 0.25); color: #c4b5fd;">Expert IA</span>
+        </button>
+
+        <div class="nav-section-title" id="sec-ferme-title">
+          <span>FERME LAITIÈRE</span>
+          <span class="section-scope-badge badge-scope-ferme" id="badge-sec-ferme">Guilmey</span>
+        </div>
+        <button class="nav-item" data-tab="tab-lait" data-entity="ferme" id="nav-lait">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2h8l2 5v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7l2-5z"></path><line x1="6" y1="12" x2="18" y2="12"></line></svg>
+          <span>Production & Traite</span>
+        </button>
+        <button class="nav-item" data-tab="tab-cheptel" data-entity="ferme" id="nav-cheptel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+          <span>Cheptel & Vaches</span>
+        </button>
+        <button class="nav-item" data-tab="tab-nutrition" data-entity="ferme" id="nav-nutrition">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.5-4.5 10-10 10S2 17.5 2 12A10 10 0 0 1 12 2z"></path><path d="M12 6v6l4 2"></path></svg>
+          <span>Rationneur Drêche/Fourrage</span>
+        </button>
+
+        <div class="nav-section-title" id="sec-soratrad-title">
+          <span>VALORISATION DES DÉCHETS</span>
+          <span class="section-scope-badge badge-scope-soratrad" id="badge-sec-soratrad">Farcha</span>
+        </div>
+        <button class="nav-item" data-tab="tab-verre" data-entity="soratrad" id="nav-verre">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M6 3h12l-2 9a4 4 0 0 1-4 4 4 4 0 0 1-4-4L6 3z"/></svg>
+          <span>Bouteilles & Calcin (BTP)</span>
+        </button>
+        <button class="nav-item" data-tab="tab-plastique" data-entity="soratrad" id="nav-plastique">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          <span>Casiers Plastique & Granulés</span>
+        </button>
+        <button class="nav-item" data-tab="tab-dreches" data-entity="soratrad" id="nav-dreches">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span>Drêches de Brasserie</span>
+        </button>
+
+        <div class="nav-section-title">GESTION & STRATÉGIE</div>
+        <button class="nav-item" data-tab="tab-finance" id="nav-finance">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          <span>P&L & Contrôle de Gestion</span>
+        </button>
+        <button class="nav-item" data-tab="tab-qhse" id="nav-qhse">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>QHSE, Hygiène & Sécurité</span>
+        </button>
+        <button class="nav-item" data-tab="tab-simulateur" id="nav-simulateur">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M16 12l-4-4v8z"></path></svg>
+          <span>Simulateur d'Investissement</span>
+        </button>
+
+        <div class="nav-section-title" id="nav-section-infra">SYSTÈME &amp; DÉPLOIEMENT</div>
+        <button class="nav-item" data-tab="tab-infra" id="nav-infra">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          <span>Infrastructure &amp; Déploiement</span>
+          <span class="pill-badge" style="background:rgba(16,185,129,0.2);color:#34d399;">SysAdmin</span>
+        </button>
+      </nav>
+
+      <!-- Bottom System Status -->
+      <div class="sidebar-footer">
+        <div class="status-indicator">
+          <span class="pulse-green"></span>
+          <span class="status-text" id="storage-status-text">Données synchronisées</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; justify-content: space-between; margin-top: 0.35rem;">
+          <button class="btn-text-sm" id="btn-reset-zero" style="color: #f59e0b; font-weight: 600;" title="Remettre tous les compteurs à 0">
+            ↺ Compteurs à 0
+          </button>
+          <button class="btn-text-sm" id="btn-reset-demo" style="color: #10b981; font-weight: 600;" title="Recharger les exemples réalistes">
+            ⚡ Charger Démo
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+
+      <!-- ========================================================================= -->
+      <!-- TAB 1: TABLEAU DE BORD EXÉCUTIF (CONSOLIDÉ OU PAR ENTITÉ)               -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane active" id="tab-dashboard">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title" id="dash-title">Cockpit de Direction Générale & Opérations</h1>
+            <p class="view-desc" id="dash-subtitle">Indicateurs temps réel pour la Ferme de Sara (Guilmey) et SORATRAD Recyclage (Farcha).</p>
+          </div>
+          <div class="view-actions">
+            <span class="badge-date" id="current-date-badge">Semaine en cours</span>
+            <button class="btn btn-secondary btn-sm" id="btn-print-report" onclick="window.print()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              Imprimer Synthèse
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Hero Cards -->
+        <div class="kpi-grid">
+          <!-- KPI 1 -->
+          <div class="kpi-card card-green" id="kpi-card-1">
+            <div class="kpi-header">
+              <span class="kpi-label" id="kpi-label-1">Production Laitière</span>
+              <span class="kpi-icon" id="kpi-icon-1">🥛</span>
+            </div>
+            <div class="kpi-value"><span id="kpi-lait-val">180</span> <small id="kpi-unit-1">L/jour</small></div>
+            <div class="kpi-sub" id="kpi-sub-1">
+              <span class="kpi-trend positive" id="kpi-trend-1">&uarr; +5.2%</span>
+              <span id="kpi-lait-vache">Moyenne: 10.0 L / vache en lactation</span>
+            </div>
+          </div>
+
+          <!-- KPI 2 -->
+          <div class="kpi-card card-blue" id="kpi-card-2">
+            <div class="kpi-header">
+              <span class="kpi-label" id="kpi-label-2">Drêches Brasserie Collectées</span>
+              <span class="kpi-icon" id="kpi-icon-2">🌾</span>
+            </div>
+            <div class="kpi-value"><span id="kpi-dreches-val">18.5</span> <small id="kpi-unit-2">T/mois</small></div>
+            <div class="kpi-sub" id="kpi-sub-2">
+              <span class="kpi-tag" id="kpi-tag-2a">Dont 9.0 T Ferme de Sara</span>
+              <span class="kpi-tag" id="kpi-tag-2b">9.5 T Revente éleveurs</span>
+            </div>
+          </div>
+
+          <!-- KPI 3 -->
+          <div class="kpi-card card-amber" id="kpi-card-3">
+            <div class="kpi-header">
+              <span class="kpi-label" id="kpi-label-3">Calcin Verre BTP / Verrerie</span>
+              <span class="kpi-icon" id="kpi-icon-3">🍾</span>
+            </div>
+            <div class="kpi-value"><span id="kpi-verre-val">24.0</span> <small id="kpi-unit-3">T/mois</small></div>
+            <div class="kpi-sub" id="kpi-sub-3">
+              <span class="kpi-trend positive" id="kpi-trend-3">Pureté calcin 98.4%</span>
+              <span id="kpi-desc-3">Débouché BTP & pavés</span>
+            </div>
+          </div>
+
+          <!-- KPI 4 -->
+          <div class="kpi-card card-purple" id="kpi-card-4">
+            <div class="kpi-header">
+              <span class="kpi-label" id="kpi-label-4">Granulés Plastique (PEHD/PP)</span>
+              <span class="kpi-icon" id="kpi-icon-4">📦</span>
+            </div>
+            <div class="kpi-value"><span id="kpi-plastique-val">12.8</span> <small id="kpi-unit-4">T/mois</small></div>
+            <div class="kpi-sub" id="kpi-sub-4">
+              <span id="kpi-desc-4">Rendement matière: 91%</span>
+              <span class="kpi-trend positive" id="kpi-trend-4">Prix: 480 000 FCFA/T</span>
+            </div>
+          </div>
+
+          <!-- KPI 5: Financial -->
+          <div class="kpi-card card-gold" id="kpi-card-5">
+            <div class="kpi-header">
+              <span class="kpi-label" id="kpi-label-5">Chiffre d'Affaires Mensuel Estimé</span>
+              <span class="kpi-icon" id="kpi-icon-5">💰</span>
+            </div>
+            <div class="kpi-value"><span id="kpi-ca-val">11 850 000</span> <small id="kpi-unit-5">FCFA</small></div>
+            <div class="kpi-sub" id="kpi-sub-5">
+              <span class="kpi-badge-gold" id="kpi-tag-5">Marge brute globale: 44.5%</span>
+              <span id="kpi-synergie-saving">Gain synergie: 1 890 000 FCFA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ♻️ Score Circulaire — Bandeau de synthèse compact -->
+        <div class="circular-score-band">
+          <div class="cscore-item">
+            <div class="cscore-ring-wrap">
+              <svg class="cscore-ring" viewBox="0 0 44 44">
+                <circle class="cscore-track" cx="22" cy="22" r="18" />
+                <circle class="cscore-fill cscore-green" cx="22" cy="22" r="18"
+                  stroke-dasharray="87 113" stroke-dashoffset="0" />
+              </svg>
+              <span class="cscore-pct">77%</span>
+            </div>
+            <div class="cscore-label">Déchets valorisés<br><small>vs décharge directe</small></div>
+          </div>
+          <div class="cscore-divider"></div>
+          <div class="cscore-item">
+            <div class="cscore-ring-wrap">
+              <svg class="cscore-ring" viewBox="0 0 44 44">
+                <circle class="cscore-track" cx="22" cy="22" r="18" />
+                <circle class="cscore-fill cscore-amber" cx="22" cy="22" r="18"
+                  stroke-dasharray="65 113" stroke-dashoffset="0" />
+              </svg>
+              <span class="cscore-pct">57%</span>
+            </div>
+            <div class="cscore-label">Autonomie fourragère<br><small>Drêche + Maralfalfa</small></div>
+          </div>
+          <div class="cscore-divider"></div>
+          <div class="cscore-item">
+            <div class="cscore-ring-wrap">
+              <svg class="cscore-ring" viewBox="0 0 44 44">
+                <circle class="cscore-track" cx="22" cy="22" r="18" />
+                <circle class="cscore-fill cscore-blue" cx="22" cy="22" r="18"
+                  stroke-dasharray="100 113" stroke-dashoffset="0" />
+              </svg>
+              <span class="cscore-pct">89%</span>
+            </div>
+            <div class="cscore-label">Trajets mutualisés<br><small>Zéro trajet à vide</small></div>
+          </div>
+          <div class="cscore-divider"></div>
+          <div class="cscore-item cscore-main">
+            <div class="cscore-ring-wrap">
+              <svg class="cscore-ring cscore-ring-lg" viewBox="0 0 56 56">
+                <circle class="cscore-track" cx="28" cy="28" r="23" />
+                <circle class="cscore-fill cscore-gold" cx="28" cy="28" r="23"
+                  stroke-dasharray="118 144" stroke-dashoffset="0" />
+              </svg>
+              <span class="cscore-pct cscore-pct-lg">82</span>
+            </div>
+            <div class="cscore-label">
+              <strong>Score Circulaire Global</strong><br>
+              <small>Indice d'économie circulaire</small>
+            </div>
+          </div>
+          <div class="cscore-divider"></div>
+          <div class="cscore-item">
+            <div class="cscore-ring-wrap">
+              <svg class="cscore-ring" viewBox="0 0 44 44">
+                <circle class="cscore-track" cx="22" cy="22" r="18" />
+                <circle class="cscore-fill cscore-purple" cx="22" cy="22" r="18"
+                  stroke-dasharray="94 113" stroke-dashoffset="0" />
+              </svg>
+              <span class="cscore-pct">83%</span>
+            </div>
+            <div class="cscore-label">Marge opérationnelle<br><small>vs objectif 80%</small></div>
+          </div>
+          <div class="cscore-divider"></div>
+          <div class="cscore-item">
+            <div class="cscore-ring-wrap">
+              <svg class="cscore-ring" viewBox="0 0 44 44">
+                <circle class="cscore-track" cx="22" cy="22" r="18" />
+                <circle class="cscore-fill cscore-green" cx="22" cy="22" r="18"
+                  stroke-dasharray="107 113" stroke-dashoffset="0" />
+              </svg>
+              <span class="cscore-pct">95%</span>
+            </div>
+            <div class="cscore-label">Collecte casiers<br><small>vs plan mensuel</small></div>
+          </div>
+        </div>
+
+        <!-- Operational Cockpit 2-Column Section -->
+        <div class="dashboard-grid">
+          <!-- Flow Chart Visualizer -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Matrice de Performance Opérationnelle</h2>
+              <span class="pill-info">Temps réel</span>
+            </div>
+            <div class="card-body">
+              <div class="perf-bar-group">
+                <div class="perf-bar-label">
+                  <span>Capacité Tank à lait Guilmey (300 L)</span>
+                  <strong id="bar-tank-pct">0% (0 L)</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill fill-green" id="bar-tank-fill" style="width: 0%"></div></div>
+              </div>
+
+              <div class="perf-bar-group">
+                <div class="perf-bar-label">
+                  <span>Autonomie Stock Drêches Ferme (Besoin: 300 kg/j)</span>
+                  <strong id="bar-dreche-stock">0 jour (0 kg disponible)</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill fill-amber" id="bar-dreche-fill" style="width: 0%"></div></div>
+              </div>
+
+              <div class="perf-bar-group">
+                <div class="perf-bar-label">
+                  <span>Objectif Collecte Casiers Plastiques (Farcha)</span>
+                  <strong id="bar-plastique-pct">0% (0 T / 15 T)</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill fill-blue" id="bar-plastique-fill" style="width: 0%"></div></div>
+              </div>
+
+              <div class="perf-bar-group">
+                <div class="perf-bar-label">
+                  <span>Capacité Broyeur Calcin Verre</span>
+                  <strong id="bar-verre-pct">0% (0 T / 30 T)</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill fill-purple" id="bar-verre-fill" style="width: 0%"></div></div>
+              </div>
+
+              <!-- Quick alerts -->
+              <div class="quick-notif-box" id="dashboard-notif-box">
+                <!-- Dynamically generated notifications -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Synergies Quick Map & Cashflow Breakdown -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Répartition du Chiffre d'Affaires par Pôle</h2>
+              <span class="pill-info" id="dash-breakdown-period">Mensuel</span>
+            </div>
+            <div class="card-body">
+              <div class="revenue-breakdown" id="dashboard-rev-breakdown">
+                <!-- Dynamically populated -->
+              </div>
+
+              <div class="synergy-highlight-box">
+                <div class="syn-title">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                  <span>Boucle Économique Circulaire</span>
+                </div>
+                <p id="dash-synergy-text">
+                  En mutualisant la logistique et en intégrant les drêches fraîches de SORATRAD dans la ration de la Ferme de Sara, le système élimine les coûts de concentré importé et valorise 100% des coproduits.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 2: BOUCLE CIRCULAIRE & LOGISTIQUE (SYNERGIES GUILMEY <-> FARCHA)    -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-synergies">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Navette Circulaire & Synergies Guilmey &harr; Farcha</h1>
+            <p class="view-desc">Mutualisation des tournées logistiques, valorisation intégrée des drêches et compostage bovin.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-new-shuttle">+ Enregistrer une Navette</button>
+        </div>
+
+        <!-- Dynamic Synergies Summary Cards -->
+        <div class="sub-kpi-row mb-4">
+          <div class="sub-kpi-card">
+            <span class="sub-label">Drêches Livrées Guilmey</span>
+            <span class="sub-val" id="syn-total-dreche">0.0 T</span>
+            <span class="sub-hint">Substitut de concentré</span>
+          </div>
+          <div class="sub-kpi-card">
+            <span class="sub-label">Lait Évacué vers Ville</span>
+            <span class="sub-val" id="syn-total-lait">0 L</span>
+            <span class="sub-hint">Zéro rupture de froid</span>
+          </div>
+          <div class="sub-kpi-card">
+            <span class="sub-label">Fumier / Compost Retourné</span>
+            <span class="sub-val" id="syn-total-fumier">0.0 T</span>
+            <span class="sub-hint">Fertilisation bio</span>
+          </div>
+          <div class="sub-kpi-card">
+            <span class="sub-label">Gain Synergie Cumulé</span>
+            <span class="sub-val highlight-green" id="syn-total-savings">0 FCFA</span>
+            <span class="sub-hint">Économie vs tournées séparées</span>
+          </div>
+        </div>
+
+        <!-- Interactive Diagram Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h2 class="card-title">Schéma des Échanges Matières & Logistique (Distance ~18 km)</h2>
+            <span class="badge-tag">Zéro Trajet à Vide</span>
+          </div>
+          <div class="card-body">
+            <div class="circular-flow-container">
+              <!-- Node A: Farcha -->
+              <div class="flow-node farcha-node">
+                <div class="node-badge">SITE 1 : FARCHA</div>
+                <h3>SORATRAD & Brasserie</h3>
+                <p class="node-desc">Gisement déchets & brasserie industrielle</p>
+                <div class="node-items">
+                  <span class="item-tag">&bull; Drêches fraîches (~78% eau)</span>
+                  <span class="item-tag">&bull; Verre collecté bars/hôtels</span>
+                  <span class="item-tag">&bull; Casiers PEHD/PP usagés</span>
+                </div>
+              </div>
+
+              <!-- Connecting Logistics Path Aller -->
+              <div class="flow-arrow-box">
+                <div class="arrow-title">ALLER : Farcha &rarr; Guilmey (Matin 07h00)</div>
+                <div class="arrow-visual">
+                  <span class="truck-icon">🚚</span>
+                  <div class="arrow-line right"></div>
+                </div>
+                <div class="arrow-details">
+                  <strong>Chargement :</strong> Drêches fraîches + Consommables + Sel minéral
+                </div>
+              </div>
+
+              <!-- Node B: Guilmey -->
+              <div class="flow-node guilmey-node">
+                <div class="node-badge">SITE 2 : GUILMEY</div>
+                <h3>Ferme Laitière de Sara</h3>
+                <p class="node-desc">Troupeau laitier & parcelles Maralfalfa</p>
+                <div class="node-items">
+                  <span class="item-tag">&bull; Ration drêche fraîche (10-12 kg/VL)</span>
+                  <span class="item-tag">&bull; Production laitière de qualité</span>
+                  <span class="item-tag">&bull; Fumier bovin riche en azote</span>
+                </div>
+              </div>
+
+              <!-- Connecting Logistics Path Retour -->
+              <div class="flow-arrow-box mt-3">
+                <div class="arrow-title">RETOUR : Guilmey &rarr; Farcha (Midi 12h00)</div>
+                <div class="arrow-visual">
+                  <span class="truck-icon">🥛</span>
+                  <div class="arrow-line left"></div>
+                </div>
+                <div class="arrow-details">
+                  <strong>Chargement :</strong> Bidons de lait urbain + Fumier fertilisant compost
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shuttle Journal & Synergies Table -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Historique des Navettes Logistiques & Économies</h2>
+            <span class="pill-info">Enregistrements récents</span>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="table-shuttles">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Véhicule / Chauffeur</th>
+                    <th>Aller (Farcha &rarr; Guilmey)</th>
+                    <th>Retour (Guilmey &rarr; Farcha)</th>
+                    <th>Carburant</th>
+                    <th>Gain Économique</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-shuttles">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 3: FERME DE SARA - PRODUCTION & TRAITE                              -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-lait">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Ferme Laitière : Suivi de la Traite & Valorisation</h1>
+            <p class="view-desc">Pesée matin/soir, contrôle sanitaire du tank et valorisation directe au litre.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-new-traite">+ Enregistrer une Traite</button>
+        </div>
+
+        <!-- 4 Quick KPI widgets -->
+        <div class="sub-kpi-row">
+          <div class="sub-kpi-card">
+            <span class="sub-label">Traite du Matin (Moy.)</span>
+            <span class="sub-val" id="val-traite-matin">0 L</span>
+            <span class="sub-hint">Pesée matinale</span>
+          </div>
+          <div class="sub-kpi-card">
+            <span class="sub-label">Traite du Soir (Moy.)</span>
+            <span class="sub-val" id="val-traite-soir">0 L</span>
+            <span class="sub-hint">Pesée vespérale</span>
+          </div>
+          <div class="sub-kpi-card">
+            <span class="sub-label">Prix Moyen du Litre</span>
+            <span class="sub-val" id="val-traite-prix">600 FCFA</span>
+            <span class="sub-hint">Lait frais pasteurisé</span>
+          </div>
+          <div class="sub-kpi-card">
+            <span class="sub-label">Coût Alimentaire / Litre</span>
+            <span class="sub-val highlight-green" id="val-cost-litre">0 FCFA/L</span>
+            <span class="sub-hint">Ration drêche & Maralfalfa</span>
+          </div>
+        </div>
+
+        <!-- Traite Journal Table -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h2 class="card-title">Journal Quotidien de Traite & Écoulement</h2>
+            <div class="table-actions">
+              <span class="pill-info">Historique des pesées</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="table-traite">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Vaches en Traite</th>
+                    <th>Traite Matin (L)</th>
+                    <th>Traite Soir (L)</th>
+                    <th>Total Jour (L)</th>
+                    <th>Moyenne (L/VL)</th>
+                    <th>Vente Directe (FCFA)</th>
+                    <th>Transformé (L)</th>
+                    <th>Contrôle Sanitaire</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-traite">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 4: CHEPTEL BOVIN                                                      -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-cheptel">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Inventaire & Suivi du Cheptel Bovin</h1>
+            <p class="view-desc">Identification individuelle, statuts physiologiques, reproduction et santé animale.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-add-cow">+ Ajouter une Vache</button>
+        </div>
+
+        <!-- Dynamic distribution bar -->
+        <div class="herd-summary-bar">
+          <div class="herd-stat"><span class="num" id="stat-cows-vl">0</span> <span class="label">Vaches en Lactation (VL)</span></div>
+          <div class="herd-stat"><span class="num" id="stat-cows-vt">0</span> <span class="label">Vaches Taries (VT)</span></div>
+          <div class="herd-stat"><span class="num" id="stat-cows-gen">0</span> <span class="label">Génisses</span></div>
+          <div class="herd-stat"><span class="num" id="stat-cows-veaux">0</span> <span class="label">Veaux / Suites</span></div>
+          <div class="herd-stat"><span class="num" id="stat-cows-total">0</span> <span class="label">Total Cheptel</span></div>
+        </div>
+
+        <!-- Cheptel Table -->
+        <div class="card mt-3">
+          <div class="card-header">
+            <h2 class="card-title">Registre Officiel du Troupeau</h2>
+            <div class="filter-group">
+              <select id="filter-cow-status" class="form-control-sm">
+                <option value="all">Tous les statuts</option>
+                <option value="Lactation">En Lactation</option>
+                <option value="Tarie">Tarie</option>
+                <option value="Génisse">Génisse</option>
+                <option value="Veaux">Veaux</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="table-cheptel">
+                <thead>
+                  <tr>
+                    <th>Boucle / ID</th>
+                    <th>Nom</th>
+                    <th>Race</th>
+                    <th>Stade Physiologique</th>
+                    <th>Production (L/j)</th>
+                    <th>Dernier Vêlage</th>
+                    <th>Statut Reproduction</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-cheptel">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 5: NUTRITION & RATIONNEUR DRÊCHE / MARALFALFA                         -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-nutrition">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Rationneur Alimentaire : Drêches & Fourrages</h1>
+            <p class="view-desc">Formulation de ration équilibrée pour maximiser la production laitière au moindre coût.</p>
+          </div>
+          <span class="badge-tag">Optimiseur technico-économique</span>
+        </div>
+
+        <div class="nutrition-grid">
+          <!-- Formulation Form -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Paramètres de la Ration Journalière (par vache)</h2>
+            </div>
+            <div class="card-body">
+              <form id="form-ration">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Maralfalfa Vert Fauché (kg brut / vache / j)</label>
+                    <input type="number" id="input-maralfalfa" class="form-control" value="25" min="0" step="1">
+                    <small>Matière sèche ~18% | Cultivé localement</small>
+                  </div>
+                  <div class="form-group">
+                    <label>Drêche de Brasserie Fraîche (kg brut / vache / j)</label>
+                    <input type="number" id="input-dreche" class="form-control" value="12" min="0" step="1">
+                    <small>Matière sèche ~22% | Coproduit brasserie</small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Tourteau de Coton / Arachide (kg / v / j)</label>
+                    <input type="number" id="input-tourteau" class="form-control" value="1.5" min="0" step="0.5">
+                    <small>Achat extérieur (~320 FCFA/kg)</small>
+                  </div>
+                  <div class="form-group">
+                    <label>Son de Céréales / Maïs (kg / v / j)</label>
+                    <input type="number" id="input-son" class="form-control" value="2.0" min="0" step="0.5">
+                    <small>Achat extérieur (~180 FCFA/kg)</small>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Minéraux & CMV (g / v / j)</label>
+                    <input type="number" id="input-cmv" class="form-control" value="150" min="0" step="10">
+                    <small>Complexe oligo-vitamines laitier</small>
+                  </div>
+                  <div class="form-group">
+                    <label>Nombre de Vaches Nourries</label>
+                    <input type="number" id="input-cows-count" class="form-control" value="18" min="1">
+                    <small>Vaches ciblées pour cette ration</small>
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-primary w-100" id="btn-calc-ration">Recalculer l'Équilibre & le Coût</button>
+                <button type="button" class="btn btn-secondary w-100 mt-2" id="btn-save-ration">💾 Enregistrer cette ration comme référence active</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Nutritional & Financial Result Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Diagnostic Nutritionnel & Économique</h2>
+              <span class="badge-tag" id="badge-ration-status">Équilibrée</span>
+            </div>
+            <div class="card-body">
+              <div class="nutrition-metrics">
+                <div class="nutri-item">
+                  <span class="nutri-label">Matière Sèche Totale (MS)</span>
+                  <strong class="nutri-val" id="res-ms-val">12.8 kg MS / v</strong>
+                  <span class="nutri-sub">Objectif: 12-14 kg MS</span>
+                </div>
+                <div class="nutri-item">
+                  <span class="nutri-label">Énergie (UFL Lait)</span>
+                  <strong class="nutri-val" id="res-ufl-val">11.4 UFL</strong>
+                  <span class="nutri-sub">Permet: ~12 L / vache / jour</span>
+                </div>
+                <div class="nutri-item">
+                  <span class="nutri-label">Protéines Digestibles (PDI)</span>
+                  <strong class="nutri-val" id="res-pdi-val">980 g PDI</strong>
+                  <span class="nutri-sub">Riche grâce aux drêches brasserie</span>
+                </div>
+                <div class="nutri-item">
+                  <span class="nutri-label">Coût Journalier par Vache</span>
+                  <strong class="nutri-val highlight-green" id="res-cost-cow">1 750 FCFA</strong>
+                  <span class="nutri-sub">Vs 2 800 FCFA avec 100% concentré du commerce</span>
+                </div>
+              </div>
+
+              <!-- Comparison banner -->
+              <div class="comparison-banner mt-3">
+                <h4>Économie Réalisée grâce à la Synergie SORATRAD :</h4>
+                <div class="comp-numbers">
+                  <div><strong>1 050 FCFA</strong><span>Économie / vache / jour</span></div>
+                  <div><strong>18 900 FCFA</strong><span>Économie troupeau / jour</span></div>
+                  <div><strong>567 000 FCFA</strong><span>Économie mensuelle nette</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 6: SORATRAD - VERRE & CALCIN                                         -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-verre">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">SORATRAD : Filière Bouteilles en Verre & Calcin</h1>
+            <p class="view-desc">Collecte urbaine, tri par couleur, déshabillage, concassage et vente BTP / Verriers.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-add-glass-batch">+ Nouveau Lot de Verre</button>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Stock Verre Brut Collecté</span>
+            <div class="kpi-value"><span id="val-glass-raw">0.0</span> <small>Tonnes</small></div>
+            <span class="kpi-sub">Bouteilles collectées</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Calcin Produit (BTP)</span>
+            <div class="kpi-value"><span id="val-glass-cullet">0.0</span> <small>Tonnes</small></div>
+            <span class="kpi-sub">Granulométrie calibrée</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Prix Vente Moyen BTP</span>
+            <div class="kpi-value"><span id="val-glass-price">0</span> <small>FCFA/T</small></div>
+            <span class="kpi-sub">Pavés & béton drainant</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Chiffre d'Affaires Verre</span>
+            <div class="kpi-value highlight-green"><span id="val-glass-margin">0</span> <small>FCFA</small></div>
+            <span class="kpi-sub">Valorisation totale</span>
+          </div>
+        </div>
+
+        <!-- Glass Batches Table -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h2 class="card-title">Lots Traités & Expéditions Calcin</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="table-glass">
+                <thead>
+                  <tr>
+                    <th>Date / Lot</th>
+                    <th>Origine Collecte</th>
+                    <th>Tonnage Brut (T)</th>
+                    <th>Tri par Couleur</th>
+                    <th>Taux Rebut</th>
+                    <th>Calcin Produit (T)</th>
+                    <th>Client / Débouché</th>
+                    <th>CA Réalisé (FCFA)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-glass">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 7: SORATRAD - PLASTIQUE & GRANULÉS                                   -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-plastique">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">SORATRAD : Casiers Plastiques, Broyage & Granulation</h1>
+            <p class="view-desc">Filière PEHD (Polyéthylène Haute Densité) et PP &rarr; Paillettes lavées & Granulés plasturgistes.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-add-plastic-batch">+ Nouveau Lot Plastique</button>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Casiers Collectés</span>
+            <div class="kpi-value"><span id="val-plastic-raw">0.0</span> <small>Tonnes</small></div>
+            <span class="kpi-sub">Gisement collecté</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Production Granulés PEHD/PP</span>
+            <div class="kpi-value"><span id="val-plastic-granules">0.0</span> <small>Tonnes</small></div>
+            <span class="kpi-sub">Matière extrudée</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Prix Vente Granulés</span>
+            <div class="kpi-value"><span id="val-plastic-price">0</span> <small>FCFA/T</small></div>
+            <span class="kpi-sub">Marché plasturgistes</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Chiffre d'Affaires Plastique</span>
+            <div class="kpi-value highlight-green"><span id="val-plastic-margin">0</span> <small>FCFA</small></div>
+            <span class="kpi-sub">Valorisation totale</span>
+          </div>
+        </div>
+
+        <!-- Plastic Operations Table -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h2 class="card-title">Suivi des Lignes de Broyage & Extrusion Plastique (Farcha)</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="table-plastic">
+                <thead>
+                  <tr>
+                    <th>Date / Lot</th>
+                    <th>Type Polymère</th>
+                    <th>Quantité Casiers (Kg)</th>
+                    <th>Lavage & Broyage</th>
+                    <th>Granulation Extrusion (Kg)</th>
+                    <th>Qualité / Couleur</th>
+                    <th>Acheteur Plasturgiste</th>
+                    <th>Facturation (FCFA)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-plastic">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 8: DRÊCHES DE BRASSERIE (COLLECTE, SÉCHAGE, REVENTE)                 -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-dreches">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">SORATRAD : Filière Drêches de Brasserie</h1>
+            <p class="view-desc">Enlèvement brasserie industrielle &rarr; Distribution Ferme de Sara + Revente & Ensilage.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-add-dreche-batch">+ Réception Drêches Brasserie</button>
+        </div>
+
+        <div class="dreche-dispatch-grid">
+          <!-- Flow card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Répartition des Drêches (<span id="dreche-total-title-vol">0.0</span> Tonnes)</h2>
+            </div>
+            <div class="card-body">
+              <div class="dispatch-item">
+                <div class="dispatch-info">
+                  <strong>1. Ferme Laitière (Guilmey)</strong>
+                  <span>Consommation interne fraîche (priorité n°1)</span>
+                </div>
+                <div class="dispatch-vol" id="dreche-disp-ferme-vol">0.0 T (0%)</div>
+                <div class="dispatch-cost" id="dreche-disp-ferme-cost">Coût de transfert interne</div>
+              </div>
+
+              <div class="dispatch-item">
+                <div class="dispatch-info">
+                  <strong>2. Revente Éleveurs Bovins & Ovins</strong>
+                  <span>Conditionné en sacs hermétiques 50 kg</span>
+                </div>
+                <div class="dispatch-vol" id="dreche-disp-sale-vol">0.0 T (0%)</div>
+                <div class="dispatch-cost" id="dreche-disp-sale-cost">CA Revente: 0 FCFA</div>
+              </div>
+
+              <div class="dispatch-item">
+                <div class="dispatch-info">
+                  <strong>3. Ensilage de Réserve (Fût hermétique)</strong>
+                  <span>Stock tampon pour période de soudure fourragère</span>
+                </div>
+                <div class="dispatch-vol" id="dreche-disp-silage-vol">0.0 T (0%)</div>
+                <div class="dispatch-cost" id="dreche-disp-silage-cost">Conservation anaérobie</div>
+              </div>
+
+              <div class="dispatch-item">
+                <div class="dispatch-info">
+                  <strong>4. Compost & Méthanisation exp.</strong>
+                  <span>Mélange avec fumier bovin pour compost maraîcher</span>
+                </div>
+                <div class="dispatch-vol" id="dreche-disp-compost-vol">0.0 T (0%)</div>
+                <div class="dispatch-cost" id="dreche-disp-compost-cost">Engrais bio pour parcelles</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Protocol Anti-Gaspillage Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Protocole Anti-Altération (Chaleur Sahélienne)</h2>
+            </div>
+            <div class="card-body">
+              <div class="protocol-box">
+                <div class="protocol-step">
+                  <div class="step-num">1</div>
+                  <div class="step-text">
+                    <strong>Enlèvement sous 3 heures :</strong>
+                    <p>Départ de la brasserie immédiatement après le brassin (température résiduelle ~45-50°C).</p>
+                  </div>
+                </div>
+                <div class="protocol-step">
+                  <div class="step-num">2</div>
+                  <div class="step-text">
+                    <strong>Distribution Fraîche &lt; 48 heures :</strong>
+                    <p>Au-delà de 48h à 35°C ambiant, risque d'acidification acétique ou moisissures (mycotoxines).</p>
+                  </div>
+                </div>
+                <div class="protocol-step">
+                  <div class="step-num">3</div>
+                  <div class="step-text">
+                    <strong>Ensilage en Fûts Plastiques Recyclés (Synergie) :</strong>
+                    <p>Tassement énergique + 1% de sel de cuisine + fermeture hermétique anaérobie.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drêches Batches Registry Table -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h2 class="card-title">Registre des Réceptions de Drêches de Brasserie</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="table-dreches">
+                <thead>
+                  <tr>
+                    <th>Date / Lot</th>
+                    <th>Brasserie Source</th>
+                    <th>Tonnage Reçu (T)</th>
+                    <th>Humidité</th>
+                    <th>Alloué Ferme (T)</th>
+                    <th>Revente Éleveurs (T)</th>
+                    <th>Ensilage / Réserve (T)</th>
+                    <th>Recette Revente (FCFA)</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-dreches">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 9: P&L & CONTRÔLE DE GESTION CONSOLIDÉ                              -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-finance">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Compte de Résultat d'Exploitation & Rentabilité (P&L)</h1>
+            <p class="view-desc">Analyse financière consolidée et analytique par centre de profit (FCFA).</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btn-recalc-pnl">Actualiser les Soldes</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Compte de Résultat Mensuel Comparatif</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table pnl-table" id="table-pnl">
+                <thead>
+                  <tr>
+                    <th>Poste Financier</th>
+                    <th>Ferme Laitière</th>
+                    <th>SORATRAD Déchets</th>
+                    <th>Consolidé Réel</th>
+                    <th>% du CA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row-highlight-header"><td colspan="5">1. CHIFFRE D'AFFAIRES (PRODUITS D'EXPLOITATION)</td></tr>
+                  <tr>
+                    <td>&bull; Vente de Lait & Produits Laitiers</td>
+                    <td id="pnl-lait-ferme">0</td>
+                    <td id="pnl-lait-sora">-</td>
+                    <td id="pnl-lait-tot">0</td>
+                    <td id="pnl-lait-pct">0.0%</td>
+                  </tr>
+                  <tr>
+                    <td>&bull; Vente Granulés Plastiques PEHD/PP</td>
+                    <td id="pnl-plastic-ferme">-</td>
+                    <td id="pnl-plastic-sora">0</td>
+                    <td id="pnl-plastic-tot">0</td>
+                    <td id="pnl-plastic-pct">0.0%</td>
+                  </tr>
+                  <tr>
+                    <td>&bull; Vente Calcin de Verre (BTP)</td>
+                    <td id="pnl-glass-ferme">-</td>
+                    <td id="pnl-glass-sora">0</td>
+                    <td id="pnl-glass-tot">0</td>
+                    <td id="pnl-glass-pct">0.0%</td>
+                  </tr>
+                  <tr>
+                    <td>&bull; Revente Drêches & Sous-produits</td>
+                    <td id="pnl-dreche-ferme">-</td>
+                    <td id="pnl-dreche-sora">0</td>
+                    <td id="pnl-dreche-tot">0</td>
+                    <td id="pnl-dreche-pct">0.0%</td>
+                  </tr>
+                  <tr class="row-total">
+                    <td>TOTAL CHIFFRE D'AFFAIRES</td>
+                    <td id="pnl-tot-rev-ferme">0</td>
+                    <td id="pnl-tot-rev-sora">0</td>
+                    <td id="pnl-tot-rev-global">0</td>
+                    <td id="pnl-tot-rev-pct">100.0%</td>
+                  </tr>
+
+                  <tr class="row-highlight-header"><td colspan="5">2. CHARGES VARIABLES D'EXPLOITATION</td></tr>
+                  <tr>
+                    <td>&bull; Alimentation bovine (Ration drêches, fourrage, CMV)</td>
+                    <td id="pnl-feed-ferme">0</td>
+                    <td id="pnl-feed-sora">-</td>
+                    <td id="pnl-feed-tot">0</td>
+                    <td id="pnl-feed-pct">0.0%</td>
+                  </tr>
+                  <tr>
+                    <td>&bull; Achat matière première déchets (Bouteilles & Casiers)</td>
+                    <td id="pnl-waste-ferme">-</td>
+                    <td id="pnl-waste-sora">0</td>
+                    <td id="pnl-waste-tot">0</td>
+                    <td id="pnl-waste-pct">0.0%</td>
+                  </tr>
+                  <tr>
+                    <td>&bull; Énergie, Carburant navette & groupes électrogènes</td>
+                    <td id="pnl-energy-ferme">0</td>
+                    <td id="pnl-energy-sora">0</td>
+                    <td id="pnl-energy-tot">0</td>
+                    <td id="pnl-energy-pct">0.0%</td>
+                  </tr>
+                  <tr>
+                    <td>&bull; Consommables d'emballage & pièces d'usure broyeurs</td>
+                    <td id="pnl-consum-ferme">0</td>
+                    <td id="pnl-consum-sora">0</td>
+                    <td id="pnl-consum-tot">0</td>
+                    <td id="pnl-consum-pct">0.0%</td>
+                  </tr>
+                  <tr class="row-subtotal">
+                    <td>MARGE BRUTE OPÉRATIONNELLE</td>
+                    <td id="pnl-mb-ferme">0</td>
+                    <td id="pnl-mb-sora">0</td>
+                    <td id="pnl-mb-global">0</td>
+                    <td id="pnl-mb-pct">0.0%</td>
+                  </tr>
+
+                  <tr class="row-highlight-header"><td colspan="5">3. CHARGES FIXES & STRUCTURES</td></tr>
+                  <tr>
+                    <td>&bull; Salaires & charges personnel (Guilmey / Farcha)</td>
+                    <td id="pnl-sal-ferme">0</td>
+                    <td id="pnl-sal-sora">0</td>
+                    <td id="pnl-sal-tot">0</td>
+                    <td id="pnl-sal-pct">0.0%</td>
+                  </tr>
+                  <tr>
+                    <td>&bull; Loyer, sécurité & entretien foncier</td>
+                    <td id="pnl-rent-ferme">0</td>
+                    <td id="pnl-rent-sora">0</td>
+                    <td id="pnl-rent-tot">0</td>
+                    <td id="pnl-rent-pct">0.0%</td>
+                  </tr>
+                  <tr>
+                    <td>&bull; Soins vétérinaires, insémination, audit QHSE</td>
+                    <td id="pnl-vet-ferme">0</td>
+                    <td id="pnl-vet-sora">0</td>
+                    <td id="pnl-vet-tot">0</td>
+                    <td id="pnl-vet-pct">0.0%</td>
+                  </tr>
+                  <tr class="row-final-profit">
+                    <td>RÉSULTAT NET D'EXPLOITATION (EBITDA)</td>
+                    <td id="pnl-net-ferme">0</td>
+                    <td id="pnl-net-sora">0</td>
+                    <td id="pnl-net-global">0</td>
+                    <td id="pnl-net-pct">0.0%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 10: QHSE, CONFORMITÉ, HYGIÈNE & SÉCURITÉ                            -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-qhse">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">QHSE : Sécurité au Travail, Hygiène Laitière & Environnement</h1>
+            <p class="view-desc">Standards rigoureux pour prévenir les accidents industriels et garantir la qualité du lait.</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <span class="badge-tag" id="qhse-compliance-tag">100% Conforme</span>
+            <button class="btn btn-primary btn-sm" id="btn-add-audit">+ Enregistrer un Contrôle QHSE</button>
+          </div>
+        </div>
+
+        <div class="qhse-grid">
+          <!-- Ferme QHSE card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Protocole Sanitaire Ferme Laitière (Guilmey)</h2>
+              <span class="badge-tag">Qualité Alimentaire</span>
+            </div>
+            <div class="card-body">
+              <div class="checklist" id="checklist-ferme">
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-f0">
+                  <span>Lavage et désinfection de la machine à traire avant et après chaque traite (solution acide/alcaline).</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-f1">
+                  <span>Test au bol d'épreuve (fond noir) pour dépister les mammites cliniques sur chaque quartier.</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-f2">
+                  <span>Trempage des trayons post-traite avec produit barrière désinfectant.</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-f3">
+                  <span>Contrôle thermique permanent du tank à lait (consigne &le; 4°C sous 2h max).</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-f4">
+                  <span>Vérification quotidienne de l'état de fraîcheur et d'acidité des drêches distribuées.</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- SORATRAD QHSE card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Sécurité Atelier & Environnement Usine (Farcha)</h2>
+              <span class="badge-tag">Sécurité Industrielle</span>
+            </div>
+            <div class="card-body">
+              <div class="checklist" id="checklist-soratrad">
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-s0">
+                  <span>Port obligatoire des gants anticoupure niveau 5 et lunettes de protection sur la ligne verre.</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-s1">
+                  <span>Masques anti-poussières FFP3 lors du concassage pour éviter l'inhalation de silice.</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-s2">
+                  <span>Protections auditives (casques antibruit) à proximité des broyeurs et de l'extrudeuse.</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-s3">
+                  <span>Extincteurs CO2 et poudre ABC inspectés et accessibles près des moteurs et de l'extrudeuse.</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" id="chk-qhse-s4">
+                  <span>Arrêt d'urgence (coup de poing) testé et fonctionnel sur chaque broyeur et granulateur.</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QHSE Audits Register Table -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h2 class="card-title">Registre des Contrôles & Audits QHSE Réalisés</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="data-table" id="table-qhse-audits">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Site / Atelier</th>
+                    <th>Type de Contrôle</th>
+                    <th>Inspecteur / Responsable</th>
+                    <th>Résultat Conformité</th>
+                    <th>Observations & Actions Correctives</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-qhse-audits">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 11: SIMULATEUR D'INVESTISSEMENT STRATÉGIQUE                         -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-simulateur">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Simulateur d'Investissement & Scénarios de Croissance</h1>
+            <p class="view-desc">Modélisation technico-financière pour décupler la rentabilité et l'autonomie des deux entités.</p>
+          </div>
+          <span class="badge-tag">Aide à la décision</span>
+        </div>
+
+        <div class="simulator-layout">
+          <!-- Left: Scenarios Choice -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Sélectionnez ou Personnalisez un Projet</h2>
+            </div>
+            <div class="card-body">
+              <div class="scenario-buttons">
+                <button type="button" class="scenario-btn active" data-scenario="solar">
+                  <strong>Projet 1 : Centrale Solaire Hybride (Guilmey + Farcha)</strong>
+                  <p>Réduction de 85% de la facture diesel des groupes électrogènes (tank à lait + broyeurs).</p>
+                </button>
+                <button type="button" class="scenario-btn" data-scenario="granulateur">
+                  <strong>Projet 2 : Deuxième Ligne d'Extrusion Granulation Plastique</strong>
+                  <p>Doubler la capacité de traitement des casiers (passer de 12 T à 25 T/mois de granulés).</p>
+                </button>
+                <button type="button" class="scenario-btn" data-scenario="cheptel">
+                  <strong>Projet 3 : Agrandissement du Cheptel (+15 Génisses Laitières)</strong>
+                  <p>Passer de 180 L/jour à 350 L/jour avec extension de 2 ha de Maralfalfa sous goutte-à-goutte.</p>
+                </button>
+                <button type="button" class="scenario-btn" data-scenario="dreches_dryer">
+                  <strong>Projet 4 : Séchoir Solaire & Stockage Hermétique Drêches</strong>
+                  <p>Stabiliser 100% des drêches de brasserie, éliminer tout risque de moisissure et vendre toute l'année.</p>
+                </button>
+                <button type="button" class="scenario-btn" data-scenario="verre_fin">
+                  <strong>Projet 5 : Unité de Tamisage Fin & Lavage Calcin Haute Pureté</strong>
+                  <p>Vente à haute valeur ajoutée aux verriers industriels et bétons architecturaux (95 000 FCFA/T).</p>
+                </button>
+              </div>
+
+              <div class="custom-sim-form mt-4">
+                <div class="form-group">
+                  <label>Montant Investissement Initial (CAPEX en FCFA)</label>
+                  <input type="number" id="sim-capex" class="form-control" value="8500000" step="500000">
+                </div>
+                <div class="form-group">
+                  <label>Gain / Économie Mensuelle Nette Supplémentaire (FCFA/mois)</label>
+                  <input type="number" id="sim-gain-month" class="form-control" value="750000" step="50000">
+                </div>
+                <div class="form-group">
+                  <label>Frais d'entretien annuels (FCFA/an)</label>
+                  <input type="number" id="sim-maint-year" class="form-control" value="400000" step="50000">
+                </div>
+                <button type="button" class="btn btn-primary w-100" id="btn-run-simulation">Calculer le Retour sur Investissement</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Simulation Output Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Résultats Financiers de la Simulation</h2>
+              <span class="badge-tag" id="sim-verdict-badge">Projet Rentable</span>
+            </div>
+            <div class="card-body">
+              <div class="sim-results-grid">
+                <div class="sim-kpi">
+                  <span class="sim-label">Délai de Récupération (Payback)</span>
+                  <div class="sim-val" id="sim-res-payback">0.0 Mois</div>
+                  <span class="sim-sub">Retour sur investissement</span>
+                </div>
+                <div class="sim-kpi">
+                  <span class="sim-label">Gain Net Annuel Récurrent</span>
+                  <div class="sim-val highlight-green" id="sim-res-gain-year">0 FCFA</div>
+                  <span class="sim-sub">Cashflow libre additionnel</span>
+                </div>
+                <div class="sim-kpi">
+                  <span class="sim-label">Taux de Rentabilité Interne (TRI estimé)</span>
+                  <div class="sim-val" id="sim-res-tri">0.0%</div>
+                  <span class="sim-sub">Efficience du capital</span>
+                </div>
+                <div class="sim-kpi">
+                  <span class="sim-label">Impact Écologique & ESG</span>
+                  <div class="sim-val" id="sim-res-co2">- 0 T CO2/an</div>
+                  <span class="sim-sub">Bilan environnemental</span>
+                </div>
+              </div>
+
+              <!-- Recommendation Text -->
+              <div class="sim-advice-box mt-3">
+                <h4>Recommandation du Directeur des Opérations :</h4>
+                <p id="sim-advice-text">Sélectionnez un projet ou saisissez vos paramètres personnalisés pour simuler la rentabilité opérationnelle.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 12: DIRECTEUR DES OPÉRATIONS IA & STRATÉGIE                         -->
+      <!-- ========================================================================= -->
+      <section class="tab-pane" id="tab-ai-expert">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Directeur des Opérations IA & Stratégie Circulaire</h1>
+            <p class="view-desc">Assistant exécutif expert en gestion conjointe ferme laitière & recyclage industriel (Verre, Plastique, Drêches).</p>
+          </div>
+          <span class="ai-badge-header">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            IA Stratégique Connectée
+          </span>
+        </div>
+
+        <div class="ai-director-grid">
+          <!-- Left: Framing Form & Instant Actions -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">1. Cadrage des Informations & Paramètres Réels</h2>
+              <span class="pill-info">Données Métier</span>
+            </div>
+            <div class="card-body">
+              <p class="text-sm text-muted mb-3">
+                Renseignez ici les spécificités de votre exploitation pour calibrer les recommandations de l'IA (nom, localisation, cheptel, prix locaux, etc.).
+              </p>
+
+              <form id="form-framing-data">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Nom de la Ferme Laitière</label>
+                    <input type="text" id="cfg-ferme-name" class="form-control" value="Ferme de Sara">
+                  </div>
+                  <div class="form-group">
+                    <label>Localisation Ferme</label>
+                    <input type="text" id="cfg-ferme-loc" class="form-control" value="Guilmey">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Objectif Traite Journalière (Litres/j)</label>
+                    <input type="number" id="cfg-ferme-liters" class="form-control" value="180">
+                  </div>
+                  <div class="form-group">
+                    <label>Prix de Vente Lait (FCFA/L)</label>
+                    <input type="number" id="cfg-milk-price" class="form-control" value="600">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Nom Société de Déchets</label>
+                    <input type="text" id="cfg-dechets-name" class="form-control" value="SORATRAD">
+                  </div>
+                  <div class="form-group">
+                    <label>Localisation Atelier Déchets</label>
+                    <input type="text" id="cfg-dechets-loc" class="form-control" value="Farcha">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Prix Moyen Granulés PEHD/PP (FCFA/T)</label>
+                    <input type="number" id="cfg-price-plastic" class="form-control" value="480000">
+                  </div>
+                  <div class="form-group">
+                    <label>Prix Moyen Calcin Verre BTP (FCFA/T)</label>
+                    <input type="number" id="cfg-price-glass" class="form-control" value="70000">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Distance Navette Aller-Retour (km)</label>
+                    <input type="number" id="cfg-shuttle-distance" class="form-control" value="18">
+                  </div>
+                  <div class="form-group">
+                    <label>Coût Carburant Navette A/R (FCFA)</label>
+                    <input type="number" id="cfg-shuttle-fuel" class="form-control" value="18500">
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-secondary w-100" id="btn-save-framing">
+                  💾 Enregistrer ces Paramètres & Recalibrer l'OS
+                </button>
+              </form>
+
+              <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 1.5rem 0;">
+
+              <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: #fff;">2. Missions & Analyses du Directeur des Opérations</h3>
+              <p class="text-sm text-muted mb-3">Cliquez sur une mission pour générer un plan d'action structuré, chiffré et priorisé :</p>
+
+              <div class="ai-action-pills">
+                <button type="button" class="ai-action-btn" data-action="kpi_board">📊 Tableau de bord mensuel</button>
+                <button type="button" class="ai-action-btn" data-action="logistics">🔄 Optimisation des tournées</button>
+                <button type="button" class="ai-action-btn" data-action="rentabilite">💰 Rentabilité broyage & granulation</button>
+                <button type="button" class="ai-action-btn" data-action="commercial">📈 Plan commercial BTP & Plasturgistes</button>
+                <button type="button" class="ai-action-btn" data-action="dreches">🌾 Rentabilité drêches en ration</button>
+                <button type="button" class="ai-action-btn" data-action="risques">🛡️ Diagnostic des risques QHSE</button>
+                <button type="button" class="ai-action-btn" data-action="budget">📋 Budget prévisionnel 12 mois</button>
+              </div>
+
+              <!-- Free Prompt Input Box -->
+              <div class="ai-chat-box">
+                <input type="text" id="input-ai-prompt" class="ai-chat-input" placeholder="Posez une question spécifique au Directeur des Opérations...">
+                <button type="button" class="btn btn-primary" id="btn-ai-ask">Consulter l'IA</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Output Executive Report Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Rapport Exécutif & Recommandations Stratégiques</h2>
+              <span class="pill-info" id="ai-report-timestamp">Temps réel</span>
+            </div>
+            <div class="card-body">
+              <div class="ai-response-card" id="ai-response-container">
+                <!-- Dynamically populated executive analysis -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal: Quick Data Entry Form -->
+  <div class="modal-backdrop" id="modal-entry">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Enregistrer une Nouvelle Opération</h3>
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-quick-entry">
+          <div class="form-group">
+            <label>Type d'opération</label>
+            <select id="entry-type" class="form-control">
+              <option value="traite">Traite Laitière (Guilmey)</option>
+              <option value="shuttle">Navette Logistique Farcha &harr; Guilmey</option>
+              <option value="glass">Lot Verre / Calcin (Farcha)</option>
+              <option value="plastic">Lot Plastique / Granulés (Farcha)</option>
+              <option value="dreche">Réception Drêches Brasserie</option>
+              <option value="cow">Vache / Registre Cheptel</option>
+              <option value="qhse">Contrôle / Audit QHSE</option>
+            </select>
+          </div>
+
+          <!-- Dynamic fields container -->
+          <div id="dynamic-modal-fields">
+            <!-- Rendered by JS according to selected type -->
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="modal-cancel-btn">Annuler</button>
+            <button type="submit" class="btn btn-primary" id="modal-save-btn">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       TAB INFRASTRUCTURE & DÉPLOIEMENT
+       ========================================================================= -->
+  <section class="tab-pane" id="tab-infra">
+    <div class="view-header">
+      <div>
+        <h1 class="view-title">🖥️ Infrastructure &amp; Déploiement — Guide Opérationnel</h1>
+        <p class="view-desc">Héberger AGRO-CIRCULAR OS localement sur Windows, accessible depuis Internet via Cloudflare Tunnel, avec PostgreSQL sécurisé. Réservé aux administrateurs système.</p>
+      </div>
+      <div class="view-actions">
+        <span class="badge-date">Windows · PostgreSQL · Cloudflare Tunnel</span>
+      </div>
+    </div>
+
+    <!-- SECTION 0: PRÉREQUIS -->
+    <div class="infra-section" id="infra-prereqs">
+      <div class="infra-section-header">
+        <div class="infra-step-badge" style="background:rgba(2,132,199,0.15);color:#38bdf8;border-color:rgba(2,132,199,0.3);">PRÉ</div>
+        <h2 class="infra-section-title">Questions préalables &amp; Architecture choisie</h2>
+      </div>
+      <div class="infra-prereq-grid">
+        <div class="infra-prereq-card">
+          <div class="infra-prereq-icon">💻</div>
+          <div class="infra-prereq-label">Système d'exploitation</div>
+          <div class="infra-prereq-value">Windows 10 / 11</div>
+        </div>
+        <div class="infra-prereq-card">
+          <div class="infra-prereq-icon">🗄️</div>
+          <div class="infra-prereq-label">Base de données</div>
+          <div class="infra-prereq-value">PostgreSQL 16</div>
+        </div>
+        <div class="infra-prereq-card">
+          <div class="infra-prereq-icon">🌐</div>
+          <div class="infra-prereq-label">Exposition Internet</div>
+          <div class="infra-prereq-value">Cloudflare Tunnel</div>
+        </div>
+        <div class="infra-prereq-card">
+          <div class="infra-prereq-icon">🔒</div>
+          <div class="infra-prereq-label">Chiffrement HTTPS</div>
+          <div class="infra-prereq-value">Automatique (Cloudflare)</div>
+        </div>
+        <div class="infra-prereq-card">
+          <div class="infra-prereq-icon">🌍</div>
+          <div class="infra-prereq-label">IP publique fixe</div>
+          <div class="infra-prereq-value">Non requise ✅</div>
+        </div>
+        <div class="infra-prereq-card">
+          <div class="infra-prereq-icon">💰</div>
+          <div class="infra-prereq-label">Coût infrastructure</div>
+          <div class="infra-prereq-value">Gratuit (hors domaine)</div>
+        </div>
+      </div>
+
+      <div class="infra-alert infra-alert-info">
+        <span class="infra-alert-icon">ℹ️</span>
+        <div><strong>Architecture retenue : Cloudflare Tunnel (Option 2)</strong><br>
+        Votre application locale est connectée aux serveurs Cloudflare via un tunnel chiffré sortant. Aucun port ne doit être ouvert sur votre routeur. Cloudflare fait le relais entre Internet et votre machine, en ajoutant HTTPS automatiquement. C'est l'option la plus sécurisée pour une IP dynamique.</div>
+      </div>
+
+      <div class="infra-compare-table">
+        <table>
+          <thead><tr><th>Option</th><th>Sécurité</th><th>Complexité</th><th>IP fixe requise</th><th>Ports à ouvrir</th><th>Coût</th></tr></thead>
+          <tbody>
+            <tr class="infra-row-selected">
+              <td><strong>✅ Option 2 — Cloudflare Tunnel</strong></td>
+              <td><span class="infra-badge green">Excellente</span></td>
+              <td><span class="infra-badge blue">Faible</span></td>
+              <td>Non</td>
+              <td>Aucun</td>
+              <td>Gratuit</td>
+            </tr>
+            <tr>
+              <td>Option 1 — Port Forwarding + DDNS</td>
+              <td><span class="infra-badge amber">Modérée</span></td>
+              <td><span class="infra-badge amber">Moyenne</span></td>
+              <td>Non (DDNS)</td>
+              <td>80, 443</td>
+              <td>Gratuit</td>
+            </tr>
+            <tr>
+              <td>Option 3 — VPS Relais</td>
+              <td><span class="infra-badge green">Bonne</span></td>
+              <td><span class="infra-badge red">Élevée</span></td>
+              <td>Oui (VPS)</td>
+              <td>22 (SSH)</td>
+              <td>5–15 €/mois</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION A: NOM DE DOMAINE & DNS -->
+    <div class="infra-section">
+      <div class="infra-section-header">
+        <div class="infra-step-badge">A</div>
+        <h2 class="infra-section-title">Nom de domaine &amp; Configuration DNS</h2>
+      </div>
+
+      <div class="infra-steps">
+        <div class="infra-step">
+          <div class="infra-step-num">1</div>
+          <div class="infra-step-content">
+            <h3>Acheter un nom de domaine</h3>
+            <p>Choisissez un registrar reconnu. <strong>Cloudflare Registrar</strong> est recommandé car il s'intègre nativement avec Cloudflare Tunnel.</p>
+            <div class="infra-registrar-list">
+              <a href="https://www.cloudflare.com/products/registrar/" target="_blank" class="infra-registrar-pill" style="background:rgba(249,115,22,0.1);border-color:rgba(249,115,22,0.3);color:#fb923c;">☁️ Cloudflare (recommandé)</a>
+              <a href="https://www.namecheap.com" target="_blank" class="infra-registrar-pill">Namecheap</a>
+              <a href="https://www.ovhcloud.com/fr/domains/" target="_blank" class="infra-registrar-pill">OVH</a>
+              <a href="https://www.gandi.net" target="_blank" class="infra-registrar-pill">Gandi.net</a>
+            </div>
+            <div class="infra-alert infra-alert-tip">
+              <span class="infra-alert-icon">💡</span>
+              <div>Exemple de nom de domaine : <code>agrocircular.com</code> (~10–15 $/an). Choisissez un <code>.com</code> ou <code>.io</code> pour la crédibilité professionnelle.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">2</div>
+          <div class="infra-step-content">
+            <h3>Configurer les DNS sur Cloudflare</h3>
+            <p>Si votre domaine n'est pas chez Cloudflare, ajoutez-le comme zone dans <a href="https://dash.cloudflare.com" target="_blank">dash.cloudflare.com</a> et modifiez les nameservers chez votre registrar.</p>
+            <div class="infra-code-block">
+              <div class="infra-code-header">Configuration Nameservers (chez votre registrar)</div>
+              <pre>NS1 : leila.ns.cloudflare.com
+NS2 : ursa.ns.cloudflare.com
+
+(Les serveurs exacts sont fournis par Cloudflare lors de l'ajout du domaine)</pre>
+            </div>
+            <p>Les enregistrements DNS <strong>CNAME</strong> pour le tunnel seront créés <strong>automatiquement</strong> par Cloudflare lors de la configuration du tunnel (Section C).</p>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">3</div>
+          <div class="infra-step-content">
+            <h3>Vérifier la propagation DNS</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">PowerShell — Vérification DNS</div>
+              <pre>nslookup app.votredomaine.com 8.8.8.8
+# Doit retourner une IP Cloudflare (104.x.x.x)
+
+Resolve-DnsName app.votredomaine.com
+# Vérification via PowerShell natif</pre>
+            </div>
+            <div class="infra-alert infra-alert-warning">
+              <span class="infra-alert-icon">⚠️</span>
+              <div>La propagation DNS peut prendre de <strong>5 min à 48h</strong> selon les TTL. Cloudflare est généralement rapide (< 5 min).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION B: CLOUDFLARE TUNNEL -->
+    <div class="infra-section">
+      <div class="infra-section-header">
+        <div class="infra-step-badge" style="background:rgba(249,115,22,0.15);color:#fb923c;border-color:rgba(249,115,22,0.3);">B</div>
+        <h2 class="infra-section-title">Cloudflare Tunnel — Installation &amp; Configuration Windows</h2>
+      </div>
+
+      <div class="infra-alert infra-alert-info">
+        <span class="infra-alert-icon">ℹ️</span>
+        <div><strong>Comment ça fonctionne :</strong> <code>cloudflared</code> est un agent qui s'exécute sur votre machine Windows. Il ouvre une connexion chiffrée sortante vers Cloudflare. Tout trafic entrant sur votre domaine est relayé de façon sécurisée vers votre application locale. <strong>Zéro port à ouvrir sur votre routeur.</strong></div>
+      </div>
+
+      <div class="infra-steps">
+        <div class="infra-step">
+          <div class="infra-step-num">1</div>
+          <div class="infra-step-content">
+            <h3>Télécharger &amp; installer cloudflared sur Windows</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">PowerShell (en tant qu'Administrateur)</div>
+              <pre># Téléchargement via winget (Windows 10/11)
+winget install --id Cloudflare.cloudflared
+
+# OU téléchargement manuel depuis GitHub Releases
+# https://github.com/cloudflare/cloudflared/releases/latest
+# → Télécharger : cloudflared-windows-amd64.msi
+
+# Vérification de l'installation
+cloudflared --version
+# cloudflared version 2024.x.x (built ...)</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">2</div>
+          <div class="infra-step-content">
+            <h3>Authentification Cloudflare</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">PowerShell</div>
+              <pre>cloudflared login
+# → Ouvre votre navigateur sur dash.cloudflare.com
+# → Connectez-vous et autorisez votre domaine
+# → Un fichier cert.pem est créé dans :
+#   C:\Users\VOTRE_USER\.cloudflared\cert.pem</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">3</div>
+          <div class="infra-step-content">
+            <h3>Créer le tunnel</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">PowerShell</div>
+              <pre># Création du tunnel (nommez-le agrocircular)
+cloudflared tunnel create agrocircular
+
+# Résultat :
+# Tunnel credentials written to:
+# C:\Users\USER\.cloudflared\&lt;UUID&gt;.json
+# Run this tunnel with: cloudflared tunnel run agrocircular
+
+# Notez l'UUID affiché — il identifie votre tunnel</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">4</div>
+          <div class="infra-step-content">
+            <h3>Créer le fichier de configuration du tunnel</h3>
+            <p>Créez le fichier <code>C:\Users\VOTRE_USER\.cloudflared\config.yml</code> :</p>
+            <div class="infra-code-block">
+              <div class="infra-code-header">C:\Users\USER\.cloudflared\config.yml</div>
+              <pre>tunnel: &lt;VOTRE-UUID&gt;
+credentials-file: C:\Users\USER\.cloudflared\&lt;UUID&gt;.json
+
+ingress:
+  # Application principale AGRO-CIRCULAR OS
+  - hostname: app.votredomaine.com
+    service: http://localhost:80
+    originRequest:
+      noTLSVerify: false
+
+  # API backend (si applicable)
+  - hostname: api.votredomaine.com
+    service: http://localhost:3000
+
+  # Route de fallback obligatoire
+  - service: http_status:404</pre>
+            </div>
+            <div class="infra-alert infra-alert-tip">
+              <span class="infra-alert-icon">💡</span>
+              <div>Remplacez <code>localhost:80</code> par le port sur lequel tourne votre serveur web local (ex: <code>localhost:8080</code> pour un serveur Node.js, <code>localhost:80</code> pour IIS ou Apache).</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">5</div>
+          <div class="infra-step-content">
+            <h3>Créer l'enregistrement DNS CNAME automatiquement</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">PowerShell</div>
+              <pre># Associer le sous-domaine au tunnel
+cloudflared tunnel route dns agrocircular app.votredomaine.com
+
+# Cloudflare crée automatiquement le CNAME :
+# app.votredomaine.com → &lt;UUID&gt;.cfargotunnel.com
+
+# Vérification dans le dashboard Cloudflare :
+# DNS → Records → CNAME app → Proxied ✅</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">6</div>
+          <div class="infra-step-content">
+            <h3>Démarrer le tunnel &amp; l'enregistrer comme service Windows</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">PowerShell (Administrateur) — Démarrage en tant que service</div>
+              <pre># Test manuel d'abord :
+cloudflared tunnel run agrocircular
+# Accédez à https://app.votredomaine.com → doit afficher votre app
+
+# Enregistrement comme service Windows (démarrage automatique)
+cloudflared service install
+net start cloudflared
+
+# Vérification du service
+Get-Service cloudflared
+# Status : Running ✅
+
+# Consulter les logs du tunnel
+cloudflared tunnel info agrocircular</pre>
+            </div>
+            <div class="infra-alert infra-alert-success">
+              <span class="infra-alert-icon">✅</span>
+              <div>Votre application est maintenant accessible depuis Internet sur <strong>https://app.votredomaine.com</strong> avec HTTPS gratuit fourni par Cloudflare. Aucun port n'est ouvert sur votre routeur.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION C: POSTGRESQL -->
+    <div class="infra-section">
+      <div class="infra-section-header">
+        <div class="infra-step-badge" style="background:rgba(96,165,250,0.15);color:#60a5fa;border-color:rgba(96,165,250,0.3);">C</div>
+        <h2 class="infra-section-title">Base de Données PostgreSQL — Installation &amp; Sécurisation Windows</h2>
+      </div>
+
+      <div class="infra-steps">
+        <div class="infra-step">
+          <div class="infra-step-num">1</div>
+          <div class="infra-step-content">
+            <h3>Installer PostgreSQL 16 sur Windows</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">Option A — Via winget (recommandé)</div>
+              <pre>winget install PostgreSQL.PostgreSQL.16</pre>
+            </div>
+            <div class="infra-code-block">
+              <div class="infra-code-header">Option B — Installeur graphique</div>
+              <pre># Télécharger depuis :
+# https://www.postgresql.org/download/windows/
+# → EnterpriseDB installer (.exe)
+# Port par défaut : 5432
+# Superuser : postgres
+# Notez BIEN le mot de passe défini pendant l'installation !</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">2</div>
+          <div class="infra-step-content">
+            <h3>Créer la base de données AGRO-CIRCULAR OS</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">PowerShell — via psql (ajoutez PostgreSQL au PATH)</div>
+              <pre># Connexion en tant que superuser
+psql -U postgres
+
+-- Création de la base
+CREATE DATABASE agrocircular_os
+  WITH ENCODING 'UTF8'
+  LC_COLLATE 'fr_FR.UTF-8'
+  LC_CTYPE   'fr_FR.UTF-8'
+  TEMPLATE template0;
+
+-- Création d'un utilisateur applicatif dédié (ne jamais utiliser postgres en prod)
+CREATE ROLE agro_app WITH LOGIN PASSWORD 'MotDePasseFort@2024!' CONNECTION LIMIT 10;
+
+-- Droits sur la base
+GRANT CONNECT ON DATABASE agrocircular_os TO agro_app;
+\c agrocircular_os
+GRANT USAGE ON SCHEMA public TO agro_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO agro_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO agro_app;
+
+-- Vérification
+\du
+\l
+\q</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">3</div>
+          <div class="infra-step-content">
+            <h3>Sécuriser l'accès — pg_hba.conf</h3>
+            <p>Fichier de contrôle d'accès PostgreSQL. Chemin typique : <code>C:\Program Files\PostgreSQL\16\data\pg_hba.conf</code></p>
+            <div class="infra-code-block">
+              <div class="infra-code-header">pg_hba.conf — Configuration recommandée (accès local uniquement)</div>
+              <pre># TYPE  DATABASE        USER            ADDRESS         METHOD
+
+# Superuser uniquement en local (socket)
+local   all             postgres                        scram-sha-256
+
+# Application : accès local uniquement via localhost
+host    agrocircular_os agro_app        127.0.0.1/32    scram-sha-256
+host    agrocircular_os agro_app        ::1/128         scram-sha-256
+
+# IMPORTANT : Ne jamais ajouter une règle 0.0.0.0/0 !
+# La base de données NE DOIT PAS être exposée sur Internet directement.</pre>
+            </div>
+            <div class="infra-code-block">
+              <div class="infra-code-header">postgresql.conf — bind-address (sécurité)</div>
+              <pre># Fichier : C:\Program Files\PostgreSQL\16\data\postgresql.conf
+
+# Autoriser uniquement localhost (valeur par défaut et recommandée)
+listen_addresses = 'localhost'
+
+# Si besoin d'accès depuis le réseau local uniquement :
+# listen_addresses = 'localhost,192.168.1.x'
+
+# Redémarrer le service après modification :
+net stop postgresql-x64-16
+net start postgresql-x64-16</pre>
+            </div>
+            <div class="infra-alert infra-alert-warning">
+              <span class="infra-alert-icon">⚠️</span>
+              <div><strong>Règle fondamentale :</strong> Ne jamais exposer le port 5432 de PostgreSQL directement sur Internet. Si votre backend applicatif est sur la même machine, une connexion <code>localhost</code> suffit et est sécurisée.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">4</div>
+          <div class="infra-step-content">
+            <h3>Chaîne de connexion pour l'application</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">Chaîne de connexion PostgreSQL (à stocker en variable d'environnement)</div>
+              <pre># Format standard PostgreSQL URL
+DATABASE_URL=postgresql://agro_app:MotDePasseFort%402024!@localhost:5432/agrocircular_os
+
+# Paramètres séparés
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=agrocircular_os
+DB_USER=agro_app
+DB_PASSWORD=MotDePasseFort@2024!
+
+# En PowerShell (session courante)
+$env:DATABASE_URL = "postgresql://agro_app:..."
+
+# En permanence : Paramètres système → Variables d'environnement</pre>
+            </div>
+            <div class="infra-alert infra-alert-warning">
+              <span class="infra-alert-icon">⚠️</span>
+              <div>Ne <strong>jamais</strong> coder les mots de passe en dur dans le code source. Utilisez des variables d'environnement ou un fichier <code>.env</code> hors du dépôt Git (ajoutez <code>.env</code> au <code>.gitignore</code>).</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">5</div>
+          <div class="infra-step-content">
+            <h3>Sauvegardes PostgreSQL</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">Script de sauvegarde quotidienne (PowerShell)</div>
+              <pre># backup_agrocircular.ps1
+$date = Get-Date -Format 'yyyyMMdd_HHmm'
+$backupDir = 'C:\Backups\PostgreSQL'
+New-Item -ItemType Directory -Force -Path $backupDir | Out-Null
+
+$env:PGPASSWORD = 'MotDePasseFort@2024!'
+& 'C:\Program Files\PostgreSQL\16\bin\pg_dump.exe' `
+  -U agro_app `
+  -h localhost `
+  -d agrocircular_os `
+  -F custom `
+  -f "$backupDir\agrocircular_$date.pgdump"
+
+# Supprimer les sauvegardes de plus de 30 jours
+Get-ChildItem "$backupDir\*.pgdump" | Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-30) } | Remove-Item
+
+# Planifier via le Planificateur de tâches Windows :
+# schtasks /create /tn "PG Backup AgROC" /tr "powershell -File C:\Scripts\backup_agrocircular.ps1" /sc daily /st 02:00 /ru SYSTEM</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION D: SÉCURITÉ -->
+    <div class="infra-section">
+      <div class="infra-section-header">
+        <div class="infra-step-badge" style="background:rgba(239,68,68,0.15);color:#f87171;border-color:rgba(239,68,68,0.3);">D</div>
+        <h2 class="infra-section-title">Sécurité &amp; Durcissement du Système</h2>
+      </div>
+
+      <div class="infra-security-grid">
+
+        <div class="infra-security-card">
+          <div class="infra-security-card-header">
+            <span class="infra-security-icon">🔥</span>
+            <h3>Pare-feu Windows</h3>
+          </div>
+          <div class="infra-code-block">
+            <div class="infra-code-header">PowerShell (Administrateur)</div>
+            <pre># Bloquer tout trafic entrant par défaut
+Set-NetFirewallProfile -Profile Domain,Public,Private -DefaultInboundAction Block
+
+# Autoriser uniquement le tunnel Cloudflare (sortant — déjà autorisé)
+# Bloquer le port PostgreSQL depuis l'extérieur
+New-NetFirewallRule -DisplayName 'Block PG External' `
+  -Direction Inbound -Protocol TCP `
+  -LocalPort 5432 -Action Block
+
+# Vérification des règles actives
+Get-NetFirewallRule | Where-Object Enabled -EQ True | Select-Object DisplayName, Direction, Action</pre>
+          </div>
+        </div>
+
+        <div class="infra-security-card">
+          <div class="infra-security-card-header">
+            <span class="infra-security-icon">🔐</span>
+            <h3>HTTPS Automatique (Cloudflare)</h3>
+          </div>
+          <div class="infra-code-block">
+            <div class="infra-code-header">Dashboard Cloudflare → SSL/TLS</div>
+            <pre># Dans Cloudflare Dashboard :
+# SSL/TLS → Overview → Mode : Full (strict)
+# SSL/TLS → Edge Certificates :
+#   ✅ Always Use HTTPS → ON
+#   ✅ HTTP Strict Transport Security (HSTS) → ON
+#   ✅ Minimum TLS Version → TLS 1.2
+#   ✅ TLS 1.3 → ON
+
+# Avec Cloudflare Tunnel, votre app locale
+# N'a PAS besoin de certificat SSL — Cloudflare
+# gère le chiffrement de bout en bout via le tunnel.</pre>
+          </div>
+        </div>
+
+        <div class="infra-security-card">
+          <div class="infra-security-card-header">
+            <span class="infra-security-icon">🛡️</span>
+            <h3>Cloudflare Access (MFA / Zero Trust)</h3>
+          </div>
+          <div class="infra-code-block">
+            <div class="infra-code-header">Cloudflare Zero Trust — Protection applicative</div>
+            <pre># Dans Cloudflare Zero Trust Dashboard :
+# → Access → Applications → Add an Application
+# → Type : Self-hosted
+# → Domain : app.votredomaine.com
+# → Identity providers : Email OTP, Google, GitHub
+# → Policy : Allow uniquement vos emails autorisés
+
+# Résultat : Avant d'accéder à votre app,
+# l'utilisateur doit s'authentifier via Cloudflare Access.
+# Couche de sécurité supplémentaire gratuite.</pre>
+          </div>
+          <div class="infra-alert infra-alert-tip" style="margin-top:0.75rem;">
+            <span class="infra-alert-icon">💡</span>
+            <div>Cloudflare Access gratuit jusqu'à 50 utilisateurs. C'est une couche de protection en amont de votre AGRO-CIRCULAR OS IAM.</div>
+          </div>
+        </div>
+
+        <div class="infra-security-card">
+          <div class="infra-security-card-header">
+            <span class="infra-security-icon">📋</span>
+            <h3>Bonnes pratiques &amp; Checklist</h3>
+          </div>
+          <div class="infra-checklist">
+            <label class="infra-check-item"><input type="checkbox" id="chk-mfa"> <span>MFA activé sur tous les comptes AGRO-CIRCULAR OS</span></label>
+            <label class="infra-check-item"><input type="checkbox" id="chk-https"> <span>HTTPS forcé sur Cloudflare (Always Use HTTPS)</span></label>
+            <label class="infra-check-item"><input type="checkbox" id="chk-pg-local"> <span>PostgreSQL écoute uniquement sur localhost (listen_addresses)</span></label>
+            <label class="infra-check-item"><input type="checkbox" id="chk-pg-user"> <span>Utilisateur applicatif dédié (pas le superuser postgres)</span></label>
+            <label class="infra-check-item"><input type="checkbox" id="chk-env"> <span>Mots de passe stockés en variables d'environnement</span></label>
+            <label class="infra-check-item"><input type="checkbox" id="chk-fw"> <span>Pare-feu Windows configuré (port 5432 bloqué en entrée)</span></label>
+            <label class="infra-check-item"><input type="checkbox" id="chk-backup"> <span>Sauvegardes PostgreSQL automatiques planifiées</span></label>
+            <label class="infra-check-item"><input type="checkbox" id="chk-updates"> <span>Mises à jour Windows et PostgreSQL régulières</span></label>
+            <label class="infra-check-item"><input type="checkbox" id="chk-audit"> <span>Journal d'audit AGRO-CIRCULAR OS activé et consulté régulièrement</span></label>
+            <label class="infra-check-item"><input type="checkbox" id="chk-cf-access"> <span>Cloudflare Access configuré (couche MFA externe)</span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION E: TESTS & VÉRIFICATION -->
+    <div class="infra-section">
+      <div class="infra-section-header">
+        <div class="infra-step-badge" style="background:rgba(16,185,129,0.15);color:#10b981;border-color:rgba(16,185,129,0.3);">E</div>
+        <h2 class="infra-section-title">Tests &amp; Vérification</h2>
+      </div>
+
+      <div class="infra-steps">
+        <div class="infra-step">
+          <div class="infra-step-num">🌐</div>
+          <div class="infra-step-content">
+            <h3>Tester l'accès depuis Internet</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">Tests de connectivité</div>
+              <pre># Test depuis votre réseau local (ne prouve pas l'accès externe)
+curl -I https://app.votredomaine.com
+
+# Test depuis une connexion externe :
+# 1. Activez le partage de connexion mobile sur votre téléphone
+# 2. Connectez votre PC au hotspot
+# 3. Ouvrez https://app.votredomaine.com → doit répondre
+
+# Vérification via outils en ligne :
+# https://www.whatsmydns.net/ → taper votre domaine
+# https://check-host.net/check-http → tester depuis plusieurs pays</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">🗄️</div>
+          <div class="infra-step-content">
+            <h3>Tester la connexion PostgreSQL</h3>
+            <div class="infra-code-block">
+              <div class="infra-code-header">PowerShell — Tests de base</div>
+              <pre># Connexion locale avec l'utilisateur applicatif
+psql -U agro_app -h localhost -d agrocircular_os
+# Doit s'authentifier avec succès
+
+# Vérification du service PostgreSQL
+Get-Service postgresql-x64-16
+# Status : Running ✅
+
+# Vérification des connexions actives
+psql -U postgres -c "SELECT usename, application_name, client_addr, state FROM pg_stat_activity;"
+
+# Vérifier que le port 5432 n'est PAS accessible depuis Internet
+# (Test depuis la connexion mobile — doit expirer ou être refusé)
+Test-NetConnection -ComputerName VOTRE_IP_PUBLIQUE -Port 5432
+# TcpTestSucceeded : False ← RÉSULTAT ATTENDU (bloqué par pare-feu)</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="infra-step">
+          <div class="infra-step-num">🔍</div>
+          <div class="infra-step-content">
+            <h3>Diagnostics courants &amp; Résolution de problèmes</h3>
+            <div class="infra-diag-table">
+              <table>
+                <thead><tr><th>Symptôme</th><th>Cause probable</th><th>Solution</th></tr></thead>
+                <tbody>
+                  <tr><td>Site inaccessible depuis Internet</td><td>Tunnel non démarré ou erreur config</td><td><code>cloudflared tunnel info agrocircular</code><br>Vérifier status service Windows</td></tr>
+                  <tr><td>Erreur SSL / HTTPS invalid</td><td>Mode SSL Cloudflare incorrect</td><td>Passer SSL/TLS en mode <strong>Full</strong> dans dashboard Cloudflare</td></tr>
+                  <tr><td>DNS ne résout pas</td><td>CNAME manquant ou propagation en cours</td><td><code>nslookup app.domaine.com 1.1.1.1</code><br>Patienter 5–30 min</td></tr>
+                  <tr><td>Connexion PostgreSQL refusée</td><td>pg_hba.conf trop restrictif</td><td>Vérifier l'entrée host pour 127.0.0.1/32<br>Redémarrer le service PG</td></tr>
+                  <tr><td>Mot de passe PG rejeté</td><td>Authentification scram-sha-256</td><td><code>psql -U postgres -c "ALTER USER agro_app PASSWORD 'nouveau';"</code></td></tr>
+                  <tr><td>App locale ne démarre pas</td><td>Port déjà utilisé</td><td><code>netstat -an | findstr :80</code><br>Changer le port dans config.yml</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION F: ARCHITECTURE FINALE -->
+    <div class="infra-section">
+      <div class="infra-section-header">
+        <div class="infra-step-badge" style="background:rgba(167,139,250,0.15);color:#a78bfa;border-color:rgba(167,139,250,0.3);">F</div>
+        <h2 class="infra-section-title">Architecture Finale — Vue d'ensemble</h2>
+      </div>
+      <div class="infra-arch-diagram">
+        <div class="infra-arch-row">
+          <div class="infra-arch-block internet">
+            <span class="infra-arch-icon">👤</span>
+            <div class="infra-arch-label">Utilisateurs Internet</div>
+            <div class="infra-arch-sub">Navigateur HTTPS</div>
+          </div>
+          <div class="infra-arch-arrow">→<br><small>HTTPS 443</small></div>
+          <div class="infra-arch-block cloudflare">
+            <span class="infra-arch-icon">☁️</span>
+            <div class="infra-arch-label">Cloudflare Edge</div>
+            <div class="infra-arch-sub">DDoS · WAF · TLS · DNS</div>
+          </div>
+          <div class="infra-arch-arrow">→<br><small>Tunnel chiffré</small></div>
+          <div class="infra-arch-block tunnel">
+            <span class="infra-arch-icon">🔗</span>
+            <div class="infra-arch-label">cloudflared.exe</div>
+            <div class="infra-arch-sub">Service Windows</div>
+          </div>
+          <div class="infra-arch-arrow">→<br><small>localhost:80</small></div>
+          <div class="infra-arch-block app">
+            <span class="infra-arch-icon">🌾</span>
+            <div class="infra-arch-label">AGRO-CIRCULAR OS</div>
+            <div class="infra-arch-sub">Serveur web local</div>
+          </div>
+          <div class="infra-arch-arrow">→<br><small>localhost:5432</small></div>
+          <div class="infra-arch-block db">
+            <span class="infra-arch-icon">🗄️</span>
+            <div class="infra-arch-label">PostgreSQL</div>
+            <div class="infra-arch-sub">Base locale sécurisée</div>
+          </div>
+        </div>
+        <div class="infra-arch-note">
+          🔒 <strong>Le port 5432 (PostgreSQL) n'est jamais exposé sur Internet.</strong>
+          La base de données communique uniquement en local avec l'application.
+          Cloudflare ajoute une couche WAF, DDoS protection et chiffrement TLS sans configuration sur le routeur.
+        </div>
+      </div>
+
+      <div class="infra-resources">
+        <h3 style="font-size:0.9rem;color:#64748b;margin-bottom:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">📚 Ressources officielles</h3>
+        <div class="infra-resource-links">
+          <a href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/" target="_blank" class="infra-resource-link">Documentation Cloudflare Tunnel</a>
+          <a href="https://www.postgresql.org/docs/16/" target="_blank" class="infra-resource-link">Documentation PostgreSQL 16</a>
+          <a href="https://github.com/cloudflare/cloudflared/releases" target="_blank" class="infra-resource-link">cloudflared GitHub Releases</a>
+          <a href="https://dash.cloudflare.com" target="_blank" class="infra-resource-link">Cloudflare Dashboard</a>
+          <a href="https://developers.cloudflare.com/cloudflare-one/policies/access/" target="_blank" class="infra-resource-link">Cloudflare Access (Zero Trust)</a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Toast Notification dynamique de changement d'entité -->
+  <div id="entity-toast" class="entity-toast">
+    <span id="entity-toast-dot" class="dot dot-gold"></span>
+    <span id="entity-toast-msg">Périmètre d'exploitation activé</span>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
